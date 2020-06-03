@@ -1,0 +1,1748 @@
+#pragma comment(lib, "WS2_32.lib")
+#include <iostream>
+#define _CRT_SECURE_NO_WARNINGS
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+#include <winsock2.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
+#include <iomanip>
+#include <fstream>
+#include <cstring>
+#include <string>
+#include <Windows.h>
+#include <sstream>
+#include <exception>
+#include <stdexcept>
+#include <new>
+#include <typeinfo>
+#include <conio.h>
+#include <time.h>
+#include <map>
+using namespace std;
+namespace Check_INT
+{
+	void check(int& i)
+	{
+		char p;
+		while (true)
+		{
+			cin >> i;
+			if (!cin || i > 1000 || i < -1000)
+			{
+				cin.clear();
+				while (cin.get() != '\n');
+				cout << "Некорректный ввод. Желаете продолжить?(1/0): ";
+				cin >> p;
+				if (p == '0')
+				{
+					break;
+				}
+				if (p == '1')
+				{
+					cout << "Введите коректное значение: ";
+				}
+			}
+			else
+			{
+				break;
+			}
+		}
+	}
+}
+string crypt(string word, string login)
+{
+	const string KEY = login;
+	for (int counter = 0; counter < word.length(); counter++)
+	{
+		word[counter] -= (KEY[counter % KEY.length()] - 33) % 159;
+		if (word[counter] > 175)
+			word[counter] += 49;
+		if (word[counter] > 241)
+			word[counter] -= 208;
+	}
+	return word;
+}
+string decrypt(string word, string login)
+{
+	const string KEY = login;
+	for (int counter = 0; counter < word.length(); counter++)
+	{
+		word[counter] += (KEY[counter % KEY.length()] - 33) % 159;
+		if (word[counter] > 175)
+			word[counter] -= 49;
+		if (word[counter] > 241)
+			word[counter] += 208;
+	}
+	return word;
+}
+
+
+
+class Shoes
+{
+	string style;
+	double cost;
+public:
+	string get_style();
+	double get_cost();
+	void tabl();
+	void add_style();
+};
+void Shoes::add_style()
+{
+	cout << "Введите фасон обуви: ";
+	cin >> style;
+	cout << "Введите стоимость одной пары обуви: ";
+	char p;
+	while (true)
+	{
+		cin >> cost;
+		if (!cin || cost > 1000 || cost < -1000)
+		{
+			cin.clear();
+			while (cin.get() != '\n');
+			cout << "Некорректный ввод. Желаете продолжить?(1/0): ";
+			cin >> p;
+			if (p == '0')
+			{
+				break;
+			}
+			if (p == '1')
+			{
+				cout << "Введите коректное значение: ";
+			}
+		}
+		else
+		{
+			break;
+		}
+	}
+}
+double Shoes::get_cost()
+{
+	return cost;
+}
+string Shoes::get_style()
+{
+	return style;
+}
+void Shoes::tabl()
+{
+	WORD wVersionRequested;
+	WSADATA wsaData;
+	wVersionRequested = MAKEWORD(2, 2);
+	if (WSAStartup(wVersionRequested, &wsaData) == WSASYSNOTREADY)
+	{
+		cout << "Error";
+		exit(1);
+	}
+	struct sockaddr_in peer;
+	peer.sin_family = AF_INET;
+	peer.sin_port = htons(1280);
+	peer.sin_addr.s_addr = inet_addr("127.0.0.1");
+	SOCKET s = socket(AF_INET, SOCK_STREAM, 0);
+	connect(s, (struct sockaddr*) &peer, sizeof(peer));
+	int num = 2;
+	send(s, (char*)&num, sizeof(num), 0);
+	int pl = 4;
+	send(s, (char*)&pl, sizeof(pl), 0);
+	for (int k = 0; k < 43; k++)
+	{
+		cout << "_";
+	}
+	cout << endl;
+	cout << setw(18) << left << "Название" << setw(25) << "Стоимость одной пары" << "|";
+	cout << endl;
+	for (int k = 0; k < 43; k++)
+	{
+		cout << "—";
+	}
+	cout << endl;
+	int n = 0;
+	recv(s, (char*)&n, sizeof(n), 0);
+	string s_1[100];
+	char buf_1[100], buf_2[100];
+	string style, cost;
+	map<double, string> kont;
+	for (int p = 0; p < n; )
+	{
+		int siz = 0, siz2 = 0, siz3 = 0, siz4 = 0;
+		recv(s, (char*)&siz, sizeof(siz), 0);
+		recv(s, (char*)&siz2, sizeof(siz2), 0);
+		recv(s, buf_1, siz, 0);
+		recv(s, buf_2, siz2, 0);
+		style = string(buf_1);
+		cost = string(buf_2);
+		double mark;
+		istringstream rt(cost);
+		rt >> mark;
+		kont.insert(make_pair(mark, style));
+		p = p + 4;
+	}
+	map<double, string>::reverse_iterator iter = kont.rbegin();
+	while (iter != kont.rend())
+	{
+		cout << setw(18) << left << iter->second << setw(25) << iter->first << "|" << endl;
+		iter++;
+	}
+	//cout << "|" << endl;
+	for (int k = 0; k < 43; k++)
+	{
+		cout << "—";
+	}
+	cout << endl;
+}
+class Storage : virtual public Shoes
+{
+	int kol;
+public:
+	int get_num();
+	void add_of_num();
+};
+void Storage::add_of_num()
+{
+	cout << "Введите количество, которое хранится на складе: ";
+	cin >> kol;
+}
+int Storage::get_num()
+{
+	return kol;
+}
+class Size : virtual public Shoes
+{
+	string size;
+public:
+	string get_size();
+	void add_of_size();
+};
+void Size::add_of_size()
+{
+	cout << "Введите промежуток размеров, хранящихся на складе: ";
+	cin >> size;
+}
+string Size::get_size()
+{
+	return size;
+}
+class ID : public Storage, public Size
+{
+	string id;
+public:
+	void add();
+	void red();
+	void del();
+	void all_tabl();
+};
+void ID::del()
+{
+	WORD wVersionRequested;
+	WSADATA wsaData;
+	wVersionRequested = MAKEWORD(2, 2);
+	if (WSAStartup(wVersionRequested, &wsaData) == WSASYSNOTREADY)
+	{
+		cout << "Error";
+		exit(1);
+	}
+	struct sockaddr_in peer;
+	peer.sin_family = AF_INET;
+	peer.sin_port = htons(1280);
+	peer.sin_addr.s_addr = inet_addr("127.0.0.1");
+	SOCKET s = socket(AF_INET, SOCK_STREAM, 0);
+	connect(s, (struct sockaddr*) &peer, sizeof(peer));
+	int num = 2;
+	send(s, (char*)&num, sizeof(num), 0);
+	int pl = 2;
+	send(s, (char*)&pl, sizeof(pl), 0);
+	for (int k = 0; k < 79; k++)
+	{
+		cout << "_";
+	}
+	cout << endl;
+	cout << setw(18) << left << "Название" << setw(25) << "Стоимость одной пары" << setw(18) << "Количество" << setw(18) << "Размеры" << "|";
+	cout << endl;
+	for (int k = 0; k < 79; k++)
+	{
+		cout << "—";
+	}
+	cout << endl;
+	int n = 0;
+	recv(s, (char*)&n, sizeof(n), 0);
+	string s_1[100];
+	int l = 0;
+	char buf_1[100], buf_2[100], buf_3[100], buf_4[100];
+	string style, size, cost, kolich;
+	for (int p = 0; p < n; )
+	{
+		int siz = 0, siz2 = 0, siz3 = 0, siz4 = 0;
+		recv(s, (char*)&siz, sizeof(siz), 0);
+		recv(s, (char*)&siz2, sizeof(siz2), 0);
+		recv(s, (char*)&siz3, sizeof(siz3), 0);
+		recv(s, (char*)&siz4, sizeof(siz4), 0);
+		recv(s, buf_1, siz, 0);
+		recv(s, buf_2, siz2, 0);
+		recv(s, buf_3, siz3, 0);
+		recv(s, buf_4, siz4, 0);
+		style = string(buf_1);
+		s_1[l] = style;
+		l++;
+		cost = string(buf_2);
+		kolich = string(buf_3);
+		size = string(buf_4);
+		cout << left << setw(18) << style << setw(25) << cost << setw(18) << kolich << setw(18) << size << "|" << endl;
+		p = p + 4;
+	}
+	//cout << "|" << endl;
+	for (int k = 0; k < 79; k++)
+	{
+		cout << "—";
+	}
+	cout << endl;
+	cout << "Введите название товара, который желаете удалить: ";
+	string name;
+	cin >> name;
+	send(s, name.c_str(), sizeof(name), 0);
+	char mail[100];
+	recv(s, mail, 100, 0);
+}
+void ID::red()
+{
+	WORD wVersionRequested;
+	WSADATA wsaData;
+	wVersionRequested = MAKEWORD(2, 2);
+	if (WSAStartup(wVersionRequested, &wsaData) == WSASYSNOTREADY)
+	{
+		cout << "Error";
+		exit(1);
+	}
+	struct sockaddr_in peer;
+	peer.sin_family = AF_INET;
+	peer.sin_port = htons(1280);
+	peer.sin_addr.s_addr = inet_addr("127.0.0.1");
+	SOCKET s = socket(AF_INET, SOCK_STREAM, 0);
+	connect(s, (struct sockaddr*) &peer, sizeof(peer));
+	int num = 2;
+	send(s, (char*)&num, sizeof(num), 0);
+	int pl = 2;
+	send(s, (char*)&pl, sizeof(pl), 0);
+	for (int k = 0; k < 79; k++)
+	{
+		cout << "_";
+	}
+	cout << endl;
+	cout << setw(18) << left << "Название" << setw(25) << "Стоимость одной пары" << setw(18) << "Количество" << setw(18) << "Размеры" << "|";
+	cout << endl;
+	for (int k = 0; k < 79; k++)
+	{
+		cout << "—";
+	}
+	cout << endl;
+	int n = 0;
+	recv(s, (char*)&n, sizeof(n), 0);
+	string s_1[100];
+	int l = 0;
+	char buf_1[100], buf_2[100], buf_3[100], buf_4[100];
+	string style, size, cost, kolich;
+	for (int p = 0; p < n; )
+	{
+		int siz = 0, siz2 = 0, siz3 = 0, siz4 = 0;
+		recv(s, (char*)&siz, sizeof(siz), 0);
+		recv(s, (char*)&siz2, sizeof(siz2), 0);
+		recv(s, (char*)&siz3, sizeof(siz3), 0);
+		recv(s, (char*)&siz4, sizeof(siz4), 0);
+		recv(s, buf_1, siz, 0);
+		recv(s, buf_2, siz2, 0);
+		recv(s, buf_3, siz3, 0);
+		recv(s, buf_4, siz4, 0);
+		style = string(buf_1);
+		s_1[l] = style;
+		l++;
+		cost = string(buf_2);
+		kolich = string(buf_3);
+		size = string(buf_4);
+		cout << left << setw(18) << style << setw(25) << cost << setw(18) << kolich << setw(18) << size << "|" << endl;
+		p = p + 4;
+	}
+	//cout << "|" << endl;
+	for (int k = 0; k < 79; k++)
+	{
+		cout << "—";
+	}
+	cout << endl;
+	cout << "Введите название товара, который желаете изменить: ";
+	string name;
+	int q = 0;
+	cin >> name;
+	send(s, name.c_str(), sizeof(name), 0);
+	recv(s, (char*)&q, sizeof(q), 0);
+	if (q == -1)
+	{
+		cout << "Ошибка ввода" << endl;
+	}
+	else if (q != -1)
+	{
+		ID ob;
+		ob.add_style();
+		ob.add_of_num();
+		ob.add_of_size();
+		send(s, ob.get_style().c_str(), sizeof(ob.get_style()), 0);
+		int cost;
+		cost = ob.get_cost();
+		send(s, (char*)&cost, sizeof(cost), 0);
+		int num = ob.get_num();
+		send(s, (char*)&num, sizeof(num), 0);
+		send(s, ob.get_size().c_str(), sizeof(ob.get_size()), 0);
+		const int N = 7;
+		char s_1[N];
+		int i, j, set_len;
+		char SET[] = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm123456789";
+		srand(time(NULL));
+		set_len = strlen(SET);
+		for (i = 0; i < N - 1 && i < set_len; i++)
+		{
+			j = rand() % (set_len - i) + i;
+			s_1[i] = SET[j];
+			SET[j] = SET[i];
+		}
+		s_1[i] = '\0';
+		send(s, s_1, sizeof(s_1), 0);
+	}
+}
+void ID::add()
+{
+	WORD wVersionRequested;
+	WSADATA wsaData;
+	wVersionRequested = MAKEWORD(2, 2);
+	if (WSAStartup(wVersionRequested, &wsaData) == WSASYSNOTREADY)
+	{
+		cout << "Error";
+		exit(1);
+	}
+	struct sockaddr_in peer;
+	peer.sin_family = AF_INET;
+	peer.sin_port = htons(1280);
+	peer.sin_addr.s_addr = inet_addr("127.0.0.1");
+	SOCKET s = socket(AF_INET, SOCK_STREAM, 0);
+	connect(s, (struct sockaddr*) &peer, sizeof(peer));
+	int num = 2;
+	send(s, (char*)&num, sizeof(num), 0);
+	int pl = 1;
+	send(s, (char*)&pl, sizeof(pl), 0);
+	cout << "Сколько видов обуви желаете добавить: ";
+	int k;
+	Check_INT::check(k);
+	//cin >> k;
+	int m = 0;
+	send(s, (char*)&k, sizeof(k), 0);
+	while (m != k)
+	{
+		ID ob;
+		ob.add_style();
+		ob.add_of_num();
+		ob.add_of_size();
+		send(s, ob.get_style().c_str(), sizeof(ob.get_style()), 0);
+		int cost;
+		cost = ob.get_cost();
+		send(s, (char*)&cost, sizeof(cost), 0);
+		int num = ob.get_num();
+		send(s, (char*)&num, sizeof(num), 0);
+		send(s, ob.get_size().c_str(), sizeof(ob.get_size()), 0);
+		const int N = 7;
+		char s_1[N];
+		int i, j, set_len;
+		char SET[] = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm123456789";
+		srand(time(NULL));
+		set_len = strlen(SET);
+		for (i = 0; i < N - 1 && i < set_len; i++)
+		{
+			j = rand() % (set_len - i) + i;
+			s_1[i] = SET[j];
+			SET[j] = SET[i];
+		}
+		s_1[i] = '\0';
+		send(s, s_1, sizeof(s_1), 0);
+		m++;
+	}
+}
+void ID::all_tabl()
+{
+	WORD wVersionRequested;
+	WSADATA wsaData;
+	wVersionRequested = MAKEWORD(2, 2);
+	if (WSAStartup(wVersionRequested, &wsaData) == WSASYSNOTREADY)
+	{
+		cout << "Error";
+		exit(1);
+	}
+	struct sockaddr_in peer;
+	peer.sin_family = AF_INET;
+	peer.sin_port = htons(1280);
+	peer.sin_addr.s_addr = inet_addr("127.0.0.1");
+	SOCKET s = socket(AF_INET, SOCK_STREAM, 0);
+	connect(s, (struct sockaddr*) &peer, sizeof(peer));
+	int num = 2;
+	send(s, (char*)&num, sizeof(num), 0);
+	int pl = 4;
+	send(s, (char*)&pl, sizeof(pl), 0);
+	for (int k = 0; k < 79; k++)
+	{
+		cout << "_";
+	}
+	cout << endl;
+	cout << setw(18) << left << "Название" << setw(25) << "Стоимость одной пары" << setw(18) << "Количество" << setw(18) << "Размеры" << "|";
+	cout << endl;
+	for (int k = 0; k < 79; k++)
+	{
+		cout << "—";
+	}
+	cout << endl;
+	int n = 0;
+	recv(s, (char*)&n, sizeof(n), 0);
+	string s_1[100];
+	char buf_1[100], buf_2[100], buf_3[100], buf_4[100];
+	string style, size, cost, kolich;
+	for (int p = 0; p < n; )
+	{
+		int siz = 0, siz2 = 0, siz3 = 0, siz4 = 0;
+		recv(s, (char*)&siz, sizeof(siz), 0);
+		recv(s, (char*)&siz2, sizeof(siz2), 0);
+		recv(s, (char*)&siz3, sizeof(siz3), 0);
+		recv(s, (char*)&siz4, sizeof(siz4), 0);
+		recv(s, buf_1, siz, 0);
+		recv(s, buf_2, siz2, 0);
+		recv(s, buf_3, siz3, 0);
+		recv(s, buf_4, siz4, 0);
+		style = string(buf_1);
+		cost = string(buf_2);
+		kolich = string(buf_3);
+		size = string(buf_4);
+		cout << left << setw(18) << style << setw(25) << cost << setw(18) << kolich << setw(18) << size << "|" << endl;
+		p = p + 4;
+	}
+	for (int k = 0; k < 79; k++)
+	{
+		cout << "—";
+	}
+	cout << endl;
+}
+class Bank
+{
+	string account;
+	double balance;
+public:
+	void set(string account, double balance)
+	{
+		this->account = account;
+		this->balance = balance;
+	}
+	bool check(double cost) //если тут тру, то заюзать команду покупки
+	{
+		if (balance >= cost)
+		{
+			return true;
+		}
+		else if (balance < cost)
+		{
+			return false;
+		}
+	}
+	double raz(double cost)
+	{
+		return (balance - cost);
+	}
+	string shifr(string login, string pin);
+};
+string Bank::shifr(string login, string pin)
+{
+	return crypt(pin, login);
+}
+
+
+string slesh()
+{
+	string str = "";
+	char c;
+	while (true) {
+		c = _getch();
+		_getch();
+		if (c == 13) break;
+		else if (c == 8 && !str.empty())
+		{
+			cout << '\b';
+			cout << ' ';
+			cout << '\b';
+			str.pop_back();
+		}
+		else if (c != 8)
+		{
+			str = str + char(c);
+			cout << "*";
+		}
+		//_getch();
+	}
+
+	cout << endl;
+	//str.push_back('\0');
+	return str;
+}
+void reg()
+{
+	system("cls");
+
+	WORD wVersionRequested;
+	WSADATA wsaData;
+	wVersionRequested = MAKEWORD(2, 2);
+	if (WSAStartup(wVersionRequested, &wsaData) == WSASYSNOTREADY)
+	{
+		cout << "Error";
+		exit(1);
+	}
+	struct sockaddr_in peer;
+	peer.sin_family = AF_INET;
+	peer.sin_port = htons(1280);
+	peer.sin_addr.s_addr = inet_addr("127.0.0.1");
+	SOCKET s = socket(AF_INET, SOCK_STREAM, 0);
+	connect(s, (struct sockaddr*) &peer, sizeof(peer));
+	int num = 3;
+	send(s, (char*)&num, sizeof(num), 0);
+	string name, pas;
+	cout << "Введите логин: ";
+	cin >> name;
+	cout << "Введите пароль: ";
+	cin >> pas;
+	send(s, name.c_str(), sizeof(name), 0);
+	send(s, pas.c_str(), sizeof(pas), 0);
+	cout << "Введите ваш банковский счёт: ";
+	string b;
+	cin >> b;
+	cout << "Введите пароль: ";
+	string pin;
+	cin >> pin;
+	cout << "Количество стредств на счету: ";
+	int kesh;
+	//cin >> kesh;
+	int z = -1;
+	while (z == -1)
+	{
+		try {
+			cin >> kesh;
+			if (kesh > 100000|| kesh <= 0)
+			{
+				throw "Ошибка ввода";
+			}
+			else if (kesh > 0 && kesh <= 100000)
+			{
+				z = 1;
+			}
+		}
+		catch (const char* s)
+		{
+			cout << "Ошибка ввода. Повторите ввод: ";
+		}
+	}
+	send(s, b.c_str(), sizeof(b), 0);
+	send(s, pin.c_str(), sizeof(pin), 0);
+	send(s, (char*)&kesh, sizeof(kesh), 0);
+	cout << endl;
+}
+void tabl()
+{
+	ifstream file;
+	file.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Store.txt");
+	string s[100];
+	int n = 0;
+	while (!file.eof())
+	{
+		file >> s[n];
+		n++;
+	}
+	file.close();
+	for (int k = 0; k < 79; k++)
+	{
+		cout << "_";
+	}
+	cout << endl;
+	cout << setw(18) << left << "Название" << setw(25) << "Стоимость одной пары" << setw(18) << "Количество" << setw(18) << "Размеры" << "|";
+	cout << endl;
+	for (int k = 0; k < 79; k++)
+	{
+		cout << "—";
+	}
+	cout << endl;
+	for (int p = 0; p < n; )
+	{
+		cout << left << setw(18) << s[p] << setw(25) << s[p + 1] << setw(18) << s[p + 2] << setw(18) << s[p + 3] << "|" << endl;
+		p = p + 4;
+	}
+	//cout << "|" << endl;
+	for (int k = 0; k < 79; k++)
+	{
+		cout << "—";
+	}
+	cout << endl;
+}
+void buy()
+{
+	WORD wVersionRequested;
+	WSADATA wsaData;
+	wVersionRequested = MAKEWORD(2, 2);
+	if (WSAStartup(wVersionRequested, &wsaData) == WSASYSNOTREADY)
+	{
+		cout << "Error";
+		exit(1);
+	}
+	struct sockaddr_in peer;
+	peer.sin_family = AF_INET;
+	peer.sin_port = htons(1280);
+	peer.sin_addr.s_addr = inet_addr("127.0.0.1");
+	SOCKET s = socket(AF_INET, SOCK_STREAM, 0);
+	connect(s, (struct sockaddr*) &peer, sizeof(peer));
+	int pl = 1;
+	send(s, (char*)&pl, sizeof(pl), 0);
+	int num = 1;
+	send(s, (char*)&num, sizeof(num), 0);
+	char buf[255], b[255];
+	tabl();
+
+	cout << "Введите название товара, который хотите приобрести: ";
+	char mail_[255];
+	recv(s, mail_, sizeof(mail_), 0);
+	//cout << mail_;
+	string name;
+	cin >> name;
+	//strncpy_s(buf, name.c_str(), name.length() + 1);
+	//strncpy_s(buf, name.c_str(), sizeof(name));
+	send(s, name.c_str(), sizeof(name), 0);
+	int q1 = 0;
+	recv(s, (char*)&q1, sizeof(int), 0);
+	//cout << q1 << endl;
+	if (q1 == -1)
+	{
+		char mail_1[255];
+		recv(s, mail_1, sizeof(mail_1), 0);
+		cout << mail_1 << endl;
+	}
+	else if (q1 != -1)
+	{
+		char mail[255];
+		recv(s, mail, sizeof(mail), 0);
+		//cout << mail << endl;
+		cout << "Количество необходимых пар обуви: ";
+		int number;
+		Check_INT::check(number);
+		send(s, (char*)&number, sizeof(number), 0);
+		int prev = 0;
+		recv(s, (char*)&prev, sizeof(prev), 0);
+		if (prev == -1)
+		{
+			char mail1[255];
+			recv(s, mail1, sizeof(mail1), 0);
+			cout << mail1 << endl;
+		}
+		else if (prev == 1)
+		{
+			char mail_2[100];
+			//recv(s, mail_2, sizeof(mail_2), 0);
+			int cost = 0;
+			recv(s, (char*)&cost, sizeof(cost), 0);
+			//cout << mail_2 << cost << endl;
+			cout << "Общая стоимость: " << cost << endl;
+
+			char mail2[100];
+			recv(s, mail2, sizeof(mail2), 0);
+			cout << "Введите название банковского счёта: " << endl;
+			string login;
+			cin >> login;
+			char mail3[100];
+			recv(s, mail3, sizeof(mail3), 0);
+			cout << "Введите пароль: " << endl;
+			string pin;
+			cin >> pin;
+			send(s, login.c_str(), sizeof(login), 0);
+			send(s, pin.c_str(), sizeof(pin), 0);
+
+			int y = 0;
+			recv(s, (char*)&y, sizeof(int), 0);
+			if (y == -1)
+			{
+				char mail4[255];
+				recv(s, mail4, sizeof(mail4), 0);
+				cout << mail4 << endl;
+			}
+			else if (y != -1)
+			{
+				char mail5[255];
+				recv(s, mail5, sizeof(mail5), 0);
+				cout << "Остаток на вашем счету: ";
+				/*char mail6[100];
+				recv(s, mail6, sizeof(mail6), 0);
+				cout << mail6;*/
+				int ost = 0;
+				recv(s, (char*)&ost, sizeof(ost), 0);
+				cout << ost << endl;
+				//cout << "At this stage, you can cancel the purchase. If you want to cancel, enter 0, if you want to make a payment, then press 1: ";
+				cout << "На данном этапе покупки возможна отмена заказа. Если вы хотите отменить заказ нажмите 0, если хотите подтвердить покупку нажмите 1: ";
+				int c;
+				char p;
+				while (true)
+				{
+					cin >> c;
+					if (!cin || c > 1 || c < 0)
+					{
+						cin.clear();
+						while (cin.get() != '\n');
+						cout << "Некорректный ввод. Желаете продолжить?(1/0): ";
+						cin >> p;
+						if (p == '0')
+						{
+							break;
+						}
+						if (p == '1')
+						{
+							cout << "Введите коректное значение: ";
+						}
+					}
+					else
+					{
+						break;
+					}
+				}
+				send(s, (char*)&c, sizeof(c), 0);
+				if (c == 1)
+				{
+					
+					char mail8[255];
+					recv(s, mail8, sizeof(mail8), 0);
+					for (int k = 0; k < 54; k++)
+					{
+						cout << "_";
+					}
+					cout << endl;
+					cout << setw(18) << left << "Название" << setw(18) << "Общая стоимость" << setw(18) << "ID" << "|";
+					cout << endl;
+					for (int k = 0; k < 54; k++)
+					{
+						cout << "—";
+					}
+					cout << endl;
+					cout << setw(18) << left << name << setw(18) << cost << setw(18) << mail8 << "|" << endl;
+					//cout << "|" << endl;
+					for (int k = 0; k < 54; k++)
+					{
+						cout << "—";
+					}
+					cout << endl;
+				}
+
+			}
+		}
+	}
+	closesocket(s);
+	WSACleanup();
+}
+void i_ll_be_back()
+{
+	WORD wVersionRequested;
+	WSADATA wsaData;
+	wVersionRequested = MAKEWORD(2, 2);
+	if (WSAStartup(wVersionRequested, &wsaData) == WSASYSNOTREADY)
+	{
+		cout << "Error";
+		exit(1);
+	}
+	struct sockaddr_in peer;
+	peer.sin_family = AF_INET;
+	peer.sin_port = htons(1280);
+	peer.sin_addr.s_addr = inet_addr("127.0.0.1");
+	SOCKET s = socket(AF_INET, SOCK_STREAM, 0);
+	connect(s, (struct sockaddr*) &peer, sizeof(peer));
+	int pl = 1;
+	send(s, (char*)&pl, sizeof(pl), 0);
+	int num = 2;
+	send(s, (char*)&num, sizeof(num), 0);
+	char mail[255];
+	recv(s, mail, sizeof(mail), 0);
+	cout << mail;
+	string id;
+	cin >> id;
+	send(s, id.c_str(), sizeof(id), 0);
+	int y = 0;
+	recv(s, (char*)&y, sizeof(y), 0);
+	if (y == -1)
+	{
+		char mil[100];
+		recv(s, mil, sizeof(mil), 0);
+	}
+	else if (y != 1)
+	{
+		char mail2[100];
+		recv(s, mail2, sizeof(mail2), 0);
+		cout << mail2 << endl;
+		string login;
+		cin >> login;
+		char mail3[100];
+		recv(s, mail3, sizeof(mail3), 0);
+		cout << mail3 << endl;
+		string pin;
+		cin >> pin;
+		send(s, login.c_str(), sizeof(login), 0);
+		send(s, pin.c_str(), sizeof(pin), 0);
+		int y = 0;
+		recv(s, (char*)&y, sizeof(int), 0);
+		if (y == -1)
+		{
+			char mail4[255];
+			recv(s, mail4, sizeof(mail4), 0);
+			cout << mail4 << endl;
+		}
+		else if (y != -1)
+		{
+			char mail_1[100], mail_2[100];
+			recv(s, mail_1, sizeof(mail_1), 0);
+			recv(s, mail_2, sizeof(mail_2), 0);
+			int cash;
+			recv(s, (char*)&cash, sizeof(cash), 0);
+			cout << mail_1 << endl;
+			cout << mail_2 << cash << endl;
+		}
+	}
+}
+void polzovatel()
+{
+	int i;
+	double kolichestvo = 0;
+	bool MENU2 = true;
+	while (MENU2)
+	{
+		cout << "MENU\n";
+		cout << "1. Оптовая закупка обуви\n";
+		cout << "2. Отмена заказа\n";
+		cout << "3. Выход в меню 1-го уровня\n";
+		cout << "Выберите необходимый вам пункт меню: ";
+		Check_INT::check(i);
+		cout << endl;
+		switch (i)
+		{
+		case 1:
+			//Закупка обуви
+		{
+			system("cls");
+			buy();
+			break;
+		}
+		case 2:
+			//Отмена заказа
+		{
+			system("cls");
+			i_ll_be_back();
+			break;
+		}
+
+		case 3:
+			MENU2 = false;
+			break;
+		default:
+			cout << "Ввод ошибочен. Повторите ввод.\n";
+			break;
+		}
+	}
+}
+void shifr_admin()
+{
+	system("cls");
+	ifstream file("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Keys.txt");
+	int k, s[100], i = 0, n = 0, f = 0;
+	int m;
+	string str[100];
+	while (!file.eof())
+	{
+		file >> str[i];
+		i++;
+	}
+	file.close();
+	for (int p = 0; p < i; p++)
+	{
+		if (str[p] == "administrator")
+		{
+			n = p;
+		}
+		else if (str[p] == "polzovatel")
+		{
+			f = p;
+		}
+	}
+	string name;
+	string pas;
+	bool MENU2 = true;
+	while (MENU2)
+	{
+		cout << "1. Добавление администратора\n" << "2. Удаление администратора\n" << "3. Добавление пользователя\n" << "4. Удаление пользователя\n" << "5. Выход из меню\n" << "Выберите нужный вариант: ";
+		cin >> m;
+		switch (m)
+		{
+		case 1:
+		{
+			ofstream file2("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Keys.txt", ios_base::trunc);
+			file2.close();
+			ofstream file3("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Keys.txt", ios_base::app);
+			for (int p = 0; p < i; p++)
+			{
+				if (p != n)
+				{
+					file3 << str[p] << " ";
+				}
+				else
+				{
+					cout << "Введите логин: ";
+					cin >> name;
+					cout << "Введите пароль: ";
+					cin >> pas;
+					pas = crypt(pas, name);
+					file3 << str[n] << " " << name << " " << pas << " ";
+				}
+			}
+			file3.close();
+			ifstream file4("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Keys.txt");
+			i = 0;
+			while (!file4.eof())
+			{
+				file4 >> str[i];
+				i++;
+			}
+			file4.close();
+			for (int p = 0; p < i; p++)
+			{
+				if (str[p] == "administrator")
+				{
+					n = p;
+				}
+				else if (str[p] == "polzovatel")
+				{
+					f = p;
+				}
+			}
+			cout << endl;
+			break;
+		}
+		case 2:
+		{
+			ifstream file4("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Keys.txt");
+			i = 0;
+			while (!file4.eof())
+			{
+				file4 >> str[i];
+				i++;
+			}
+			file4.close();
+			for (int p = 0; p < i; p++)
+			{
+				if (str[p] == "administrator")
+				{
+					n = p;
+				}
+				else if (str[p] == "polzovatel")
+				{
+					f = p;
+				}
+			}
+			int b = 0;
+			string s;
+			cout << "Введите логин администратора, которого желаете удалить: ";
+			cin >> s;
+			for (int p = 0; p < f; p++)
+			{
+				if (str[p] == s)
+				{
+					b = p;
+				}
+			}
+			if (b == 0)
+			{
+				cout << "Данный логин отсутствует";
+			}
+			else
+			{
+				ofstream file3("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Keys.txt", ios_base::out);
+				for (int p = 0; p < i; p++)
+				{
+					if (p != b)
+					{
+						file3 << str[p] << " ";
+					}
+					else if (p == b)
+					{
+						p = p++;
+					}
+				}
+				file3.close();
+			}
+			cout << endl;
+			break;
+		}
+		case 3:
+		{
+			ofstream file2("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Keys.txt", ios_base::trunc);
+			file2.close();
+			ofstream file3("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Keys.txt", ios_base::app);
+			for (int p = 0; p < i; p++)
+			{
+				if (p != f)
+				{
+					file3 << str[p] << " ";
+				}
+				else
+				{
+					cout << "Введите логин: ";
+					cin >> name;
+					cout << "Введите пароль: ";
+					cin >> pas;
+					pas = crypt(pas, name);
+					file3 << str[f] << " " << name << " " << pas << " ";
+				}
+			}
+			file3.close();
+			ofstream bank;
+			bank.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Bank.txt", ios::app);
+			cout << "Введите банковский счёт пользователя: ";
+			string b;
+			cin >> b;
+			cout << "Введите пароль: ";
+			string pin;
+			cin >> pin;
+			cout << "Количество стредств на счету: ";
+			double kesh;
+			cin >> kesh;
+			Bank p;
+			string rez;
+			rez = p.shifr(b, pin);
+			bank << b << " " << rez << " " << kesh << endl;
+			ifstream file4("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Keys.txt");
+			i = 0;
+			while (!file4.eof())
+			{
+				file4 >> str[i];
+				i++;
+			}
+			file4.close();
+			for (int p = 0; p < i; p++)
+			{
+				if (str[p] == "administrator")
+				{
+					n = p;
+				}
+				else if (str[p] == "polzovatel")
+				{
+					f = p;
+				}
+			}
+			cout << endl;
+			break;
+		}
+		case 4:
+		{
+			ifstream file4("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Keys.txt");
+			i = 0;
+			while (!file4.eof())
+			{
+				file4 >> str[i];
+				i++;
+			}
+			file4.close();
+			for (int p = 0; p < i; p++)
+			{
+				if (str[p] == "administrator")
+				{
+					n = p;
+				}
+				else if (str[p] == "polzovatel")
+				{
+					f = p;
+				}
+			}
+			int b = 0;
+			string s;
+			cout << "Введите логин пользователя, которого желаете удалить: ";
+			cin >> s;
+			for (int p = 0; p < i; p++)
+			{
+				if (str[p] == s)
+				{
+					b = p;
+				}
+			}
+			if (b == 0)
+			{
+				cout << "Данный логин отсутствует";
+			}
+			else
+			{
+				ofstream file2("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Keys.txt", ios_base::trunc);
+				file2.close();
+				ofstream file3("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Keys.txt", ios_base::app);
+				for (int p = 0; p < i; p++)
+				{
+					if (p != b)
+					{
+						file3 << str[p] << " ";
+					}
+					else if (p == b)
+					{
+						p = p++;
+					}
+				}
+				file3.close();
+			}
+			cout << endl;
+			break;
+		}
+		case 5:
+		{
+			MENU2 = false;
+			break;
+		}
+		default:
+			cout << "Ввод ошибочен. Повторите ввод.\n";
+			break;
+
+		}
+	}
+}
+void method()
+{
+	system("cls");
+	WORD wVersionRequested;
+	WSADATA wsaData;
+	wVersionRequested = MAKEWORD(2, 2);
+	if (WSAStartup(wVersionRequested, &wsaData) == WSASYSNOTREADY)
+	{
+		cout << "Error";
+		exit(1);
+	}
+	struct sockaddr_in peer;
+	peer.sin_family = AF_INET;
+	peer.sin_port = htons(1280);
+	peer.sin_addr.s_addr = inet_addr("127.0.0.1");
+	SOCKET s = socket(AF_INET, SOCK_STREAM, 0);
+	connect(s, (struct sockaddr*) &peer, sizeof(peer));
+	int num = 2;
+	send(s, (char*)&num, sizeof(num), 0);
+	int pl = 6;
+	send(s, (char*)&pl, sizeof(pl), 0);
+	int qw = 0;
+	recv(s, (char*)&qw, sizeof(qw), 0);
+	if (qw < 4)
+	{
+		cout << "Z1 - производство из гладкой телячьей кожи" << endl;
+		cout << "Z2 - производство из зернистой кожи" << endl;
+		cout << "Z3 - производство из кордована" << endl;
+		cout << "Z4 - производство из замши" << endl;
+
+
+		cout << "Шкала оценивания равна 20. Выставление отметок первым экспертом: " << endl;
+		int size = 6;
+		send(s, (char*)&size, sizeof(size), 0);
+		int mark[100];
+		int q;
+		int Z[4][4];
+		for (int j = 1; j <= 4; j++)
+		{
+			q = j;
+			for (int i = j + 1; i <= 4; i++)
+			{
+				cout << "Z" << q << " превалирует над Z" << i << " на (отметка n/20): ";
+				char p;
+				while (true)
+				{
+					cin >> mark[i];
+					if (!cin || mark[i] > 20 || mark[i] < 1)
+					{
+						cin.clear();
+						while (cin.get() != '\n');
+						cout << "Некорректный ввод. Желаете продолжить?(1/0): ";
+						cin >> p;
+						if (p == '0')
+						{
+							break;
+						}
+						if (p == '1')
+						{
+							cout << "Введите коректное значение: ";
+						}
+					}
+					else
+					{
+						break;
+					}
+				}
+				send(s, (char*)&mark[i], sizeof(mark[i]), 0);
+			}
+		}
+
+		cout << "Шкала оценивания равна 20. Выставление отметок вторым экспертом: " << endl;
+		int size1 = 6;
+		send(s, (char*)&size1, sizeof(size1), 0);
+		int mark1[100];
+		int Z1[4][4];
+		for (int j = 1; j <= 4; j++)
+		{
+			q = j;
+			for (int i = j + 1; i <= 4; i++)
+			{
+				cout << "Z" << q << " превалирует над Z" << i << " на (отметка n/20): ";
+				char p;
+				while (true)
+				{
+					cin >> mark1[i];
+					if (!cin || mark1[i] > 20 || mark1[i] < 1)
+					{
+						cin.clear();
+						while (cin.get() != '\n');
+						cout << "Некорректный ввод. Желаете продолжить?(1/0): ";
+						cin >> p;
+						if (p == '0')
+						{
+							break;
+						}
+						if (p == '1')
+						{
+							cout << "Введите коректное значение: ";
+						}
+					}
+					else
+					{
+						break;
+					}
+				}
+				send(s, (char*)&mark1[i], sizeof(mark1[i]), 0);
+			}
+
+		}
+
+		float W[4];
+		int pla = 0, max = 0;
+		for (int j = 0; j < 4; j++)
+		{
+			recv(s, (char*)&W[j], sizeof(W[j]), 0);
+			cout << "Веса целей W" << (j + 1) << " = " << W[j] << endl;
+			if (W[j] > max)
+			{
+				max = W[j];
+				pla = j + 1;
+			}
+		}
+		cout << "Исходя из полученных весов целей, следует, что наиболее приемлемым для фабрики мероприятием будет: " << pla << "-е" << endl;
+	}
+	else if (qw > 4)
+	{
+		cout << "Экспертная оценка уже была произведена" << endl;
+		char buf[6][100];
+		int mark[6];
+		for (int j = 0; j < 6; j++)
+		{
+			int siz = 0;
+			recv(s, (char*)&siz, sizeof(siz), 0);
+			recv(s, buf[j], siz, 0);
+			mark[j] = atoi(buf[j]);
+			//cout << mark[j] << endl;
+		}
+
+		char buf1[6][100];
+		int mark1[6];
+		for (int j = 0; j < 6; j++)
+		{
+			int siz = 0;
+			recv(s, (char*)&siz, sizeof(siz), 0);
+			recv(s, buf1[j], siz, 0);
+			mark1[j] = atoi(buf1[j]);
+			//cout << mark1[j] << endl;
+		}
+		for (int k = 0; k < 25; k++)
+		{
+			cout << "_";
+		}
+		cout << endl;
+		cout << setw(5) << left << "Э1" << setw(5) << "Z1" << setw(5) << "Z2" << setw(5) << "Z3" << setw(5) << "Z4" << "|";
+		cout << endl;
+		for (int k = 0; k < 25; k++)
+		{
+			cout << "—";
+		}
+		cout << endl;
+		cout << setw(5) << left << "Z1" << setw(5) << "-" << setw(5) << mark[0] << setw(5) << mark[1] << setw(5) << mark[2] << "|" << endl;
+		cout << setw(5) << left << "Z2" << setw(5) << (20 - mark[0]) << setw(5) << "-" << setw(5) << mark[3] << setw(5) << mark[4] << "|" << endl;
+		cout << setw(5) << left << "Z3" << setw(5) << (20 - mark[1]) << setw(5) << (20 - mark[3]) << setw(5) << "-" << setw(5) << mark[5] << "|" << endl;
+		cout << setw(5) << left << "Z4" << setw(5) << (20 - mark[2]) << setw(5) << (20 - mark[4]) << setw(5) << (20 - mark[5]) << setw(5) << "-" << "|" << endl;
+		for (int k = 0; k < 25; k++)
+		{
+			cout << "—";
+		}
+		cout << endl;
+
+		for (int k = 0; k < 25; k++)
+		{
+			cout << "_";
+		}
+		cout << endl;
+		cout << setw(5) << left << "Э1" << setw(5) << "Z1" << setw(5) << "Z2" << setw(5) << "Z3" << setw(5) << "Z4" << "|";
+		cout << endl;
+		for (int k = 0; k < 25; k++)
+		{
+			cout << "—";
+		}
+		cout << endl;
+		cout << setw(5) << left << "Z1" << setw(5) << "-" << setw(5) << mark1[0] << setw(5) << mark1[1] << setw(5) << mark1[2] << "|" << endl;
+		cout << setw(5) << left << "Z2" << setw(5) << (20 - mark1[0]) << setw(5) << "-" << setw(5) << mark1[3] << setw(5) << mark1[4] << "|" << endl;
+		cout << setw(5) << left << "Z3" << setw(5) << (20 - mark1[1]) << setw(5) << (20 - mark1[3]) << setw(5) << "-" << setw(5) << mark1[5] << "|" << endl;
+		cout << setw(5) << left << "Z4" << setw(5) << (20 - mark1[2]) << setw(5) << (20 - mark1[4]) << setw(5) << (20 - mark1[5]) << setw(5) << "-" << "|" << endl;
+		for (int k = 0; k < 25; k++)
+		{
+			cout << "—";
+		}
+		cout << endl;
+
+		cout << "Если хотите внести изменения, то нажмите 1, если изменения не требуются то любую другую клавишу: ";
+		int prov;
+		Check_INT::check(prov);
+		send(s, (char*)&prov, sizeof(prov), 0);
+		if (prov == 1)
+		{
+			method();
+		}
+	}
+
+
+}
+void method1()
+{
+	system("cls");
+	WORD wVersionRequested;
+	WSADATA wsaData;
+	wVersionRequested = MAKEWORD(2, 2);
+	if (WSAStartup(wVersionRequested, &wsaData) == WSASYSNOTREADY)
+	{
+		cout << "Error";
+		exit(1);
+	}
+	struct sockaddr_in peer;
+	peer.sin_family = AF_INET;
+	peer.sin_port = htons(1280);
+	peer.sin_addr.s_addr = inet_addr("127.0.0.1");
+	SOCKET s = socket(AF_INET, SOCK_STREAM, 0);
+	connect(s, (struct sockaddr*) &peer, sizeof(peer));
+	int num = 2;
+	send(s, (char*)&num, sizeof(num), 0);
+	int pl = 6;
+	send(s, (char*)&pl, sizeof(pl), 0);
+	cout << "В преддерье весеннего сезона перед складским управляющим ветеринарной клиники стоял вопрос о закупке разнообразного питания для животных. Исходя из результатов прошлых лет, управляющий вычислил, что ему нужно либо 2 тонны разнородного питательного корма за 10 тыс ден. ед. за тонну, либо 4 тонны однородного корма с примесями за 7 тыс ден. ед. за тонну, либо 6 тонн однородного корма за 5 тыс ден. ед. за тонну. Цена одной тонны составляет 5 тыс. ден. единиц. Если закупленного заранее корма будет не хватать, тогда придётся покупать сверх нормы, причём срочно, что обойдётся ветеринарной клинике на 3 тыс. ден. ед. за тонну больше первоначальной цены. Продать остаток корма не представляется возможным. С учётом всех указанных факторов требуется найти оптимальный вариант закупки корма для животных.";
+	cout << endl;
+	int cost[3][3];
+	cost[0][0] = 20; cost[0][1] = 20; cost[0][2] = 32;
+	cost[1][0] = 28; cost[1][1] = 28; cost[1][2] = 16;
+	cost[2][0] = 30; cost[2][1] = 30; cost[2][2] = 30;
+	for (int j = 0; j < 3; j++)
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			send(s, (char*)&cost[j][i], sizeof(cost[j][i]), 0);
+		}
+	}
+	for (int k = 0; k < 70; k++)
+	{
+		cout << "_";
+	}
+	cout << endl;
+	cout << setw(5) << left << " " << setw(25) << "Разнородные питательные" << setw(25) << "Однородные с примесями" << setw(15) << "Однородные" << "|";
+	cout << endl;
+	for (int k = 0; k < 70; k++)
+	{
+		cout << "—";
+	}
+	cout << endl;
+	cout << setw(5) << left << "2т" << setw(25) << cost[0][0] << setw(25) << cost[0][1] << setw(15) << cost[0][2] << "|" << endl;
+	cout << setw(5) << left << "4т" << setw(25) << cost[1][0] << setw(25) << cost[1][1] << setw(15) << cost[1][2] << "|" << endl;
+	cout << setw(5) << left << "6т" << setw(25) << cost[2][0] << setw(25) << cost[2][1] << setw(15) << cost[2][2] << "|" << endl;
+	for (int k = 0; k < 70; k++)
+	{
+		cout << "—";
+	}
+	cout << endl;
+
+	cout << "В случае если шанс того, что хватит разнородного корма - 30%, однородного с примесями - 50%, однородного - 20%. Критерии Байеса будут равны: " << endl;
+	float Z[3];
+	for (int i = 0; i < 3; i++)
+	{
+		recv(s, (char*)&Z[i], sizeof(Z[i]), 0);
+		cout << "Z" << i + 1 << "= " << Z[i] << endl;
+	}
+
+	cout << endl << "В случае если вероятности неизвестны. Критерий Лапласа: " << endl;
+	float Z1[3];
+	for (int i = 0; i < 3; i++)
+	{
+		recv(s, (char*)&Z1[i], sizeof(Z1[i]), 0);
+		cout << "Z" << i + 1 << "= " << Z1[i] << endl;
+	}
+	
+	cout << endl << "Критерий Вальда: " << endl;
+	float Z2[3];
+	for (int i = 0; i < 3; i++)
+	{
+		recv(s, (char*)&Z2[i], sizeof(Z2[i]), 0);
+		cout << "Z" << i + 1 << "= " << Z2[i] << endl;
+	}
+
+	cout << endl << "В случае если коэффициент пессизмизма равен 0.3. Критерий Гурвица: " << endl;
+	float Z3[3];
+	for (int i = 0; i < 3; i++)
+	{
+		recv(s, (char*)&Z3[i], sizeof(Z3[i]), 0);
+		cout << "Z" << i + 1 << "= " << Z3[i] << endl;
+	}
+
+	cout << endl << "Таким образом, с учётов всех использованных коэффициентов следует выбрать компромисное решение: закупить 4 тонны корма для животных" << endl;
+}
+void administrator()
+{
+	int i;
+	bool MENU2 = true;
+	while (MENU2)
+	{
+		cout << "MENU\n";
+		cout << "1. Добавление товаров\n";
+		cout << "2. Редактирование существующих моделей обуви\n";
+		cout << "3. Удаление информации о товаре\n";
+		cout << "4. Просмотр всех данных в табличной форме\n";
+		cout << "5. Управление пользователями\n";
+		cout << "6. Решение задачи экспертным методом\n";
+		cout << "7. Выход в меню 1-го уровня\n";
+		cout << "Выберите необходимый вам пункт меню: ";
+		Check_INT::check(i);
+		cout << endl;
+		switch (i)
+		{
+		case 1:
+			//Добавление записи
+		{
+			ID ob;
+			ob.add();
+			break;
+		}
+		case 2:
+			//Редактирование записи
+		{
+			ID ob;
+			ob.red();
+			break;
+		}
+		case 3:
+		{
+			ID ob;
+			ob.del();
+			break;
+		}
+		case 4:
+			//Просмотр всех данных в табличной форме
+		{
+			ID ob;
+			ob.all_tabl();
+			break;
+		}
+		case 5:
+			//Управление пользователями
+		{
+			shifr_admin();
+			break;
+		}
+		case 6:
+		{
+			method();
+			//method1();
+			break;
+		}
+		case 7:
+			MENU2 = false;
+			break;
+		default:
+			cout << "Ввод ошибочен. Повторите ввод.\n";
+			break;
+		}
+	}
+}
+bool shift()
+{
+	ifstream fin;
+	fin.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Keys.txt", ios_base::app);
+	string str1[100];
+	string str2[100];
+	int i = 0, k = 1, f = 0, n, q;
+	while (!fin.eof())
+	{
+		//str1[i] = "";
+		fin >> str1[i];
+		if (str1[i] == "administrator")
+		{
+			n = i;
+		}
+		if (str1[i] == "polzovatel")
+		{
+			q = i;
+		}
+		i++;
+	}
+	while (k == 1)
+	{
+		f = 0;
+		k = 1;
+		cout << "Введите логин: ";
+		cin >> str2[k];
+		cout << "Введите пароль: ";
+		str2[k + 1] = slesh();
+		for (int p = n; p < q; p++)
+		{
+			if (str1[p] == str2[k])
+			{
+				//str1[1] = decrypt(str1[1], str1[0]);
+				str1[p + 1] = decrypt(str1[p + 1], str1[p]);//реализовать дешифрование
+				if (str1[p + 1] == str2[k + 1])
+				{
+					f = 0;
+					break;
+				}
+			}
+			else
+				f++;
+		}
+		if (f == 0)
+		{
+			k = 0;
+			return true;
+		}
+		else
+		{
+			cout << "Логин или пароль ошибочны. Повторить ввод?(1/0): ";
+			//cin >> k;
+			Check_INT::check(k);
+			if (k == 0)
+			{
+				return false;
+			}
+		}
+	}
+	fin.close();
+}
+bool shift_polz()
+{
+
+	ifstream fin;
+	fin.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Keys.txt", ios_base::app);
+	string str1[100];
+	string str2[100];
+	int i = 0, k = 1, f = 0, n, q;
+	while (!fin.eof())
+	{
+		//str1[i] = "";
+		fin >> str1[i];
+		if (str1[i] == "administrator")
+		{
+			n = i;
+		}
+		if (str1[i] == "polzovatel")
+		{
+			q = i;
+		}
+		i++;
+	}
+	while (k == 1)
+	{
+		f = 0;
+		k = 1;
+		cout << "Введите логин: ";
+		cin >> str2[k];
+		cout << "Введите пароль: ";
+		str2[k + 1] = slesh();;
+		for (int p = q; p < i; p++)
+		{
+			if (str1[p] == str2[k])
+			{
+				//str1[1] = decrypt(str1[1], str1[0]);
+				str1[p + 1] = decrypt(str1[p + 1], str1[p]);
+				if (str1[p + 1] == str2[k + 1])
+				{
+					f = 0;
+					break;
+				}
+			}
+			else
+				f++;
+		}
+		if (f == 0)
+		{
+			k = 0;
+			return true;
+		}
+		else
+		{
+			cout << "Логин или пароль ошибочны. Повторить ввод?(1/0): ";
+			//cin >> k;
+			Check_INT::check(k);
+			if (k == 0)
+			{
+				return false;
+			}
+		}
+	}
+	fin.close();
+}
+int main()
+{
+	setlocale(LC_ALL, "Russian");
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
+	int ch_key;
+	bool i;
+	bool MENU = true;
+	while (MENU)
+	{
+		cout << "MENU\n";
+		cout << "1. Авторизация пользователя\n";
+		cout << "2. Авторизация администратора\n";
+		cout << "3. Регистрация\n";
+		cout << "4. Выход из программы\n";
+		cout << "Введите нужный элемент: ";
+		cin >> ch_key;
+		cout << endl;
+		switch (ch_key)
+		{
+		case 1:
+		{
+			system("cls");
+			if (shift_polz() == true)
+			{
+				polzovatel();
+			}
+			break;
+		}
+		case 2:
+		{
+			system("cls");
+			if (shift() == true)
+			{
+				administrator();
+			}
+			break;
+		}
+		case 3:
+		{
+			reg();
+			
+			break;
+		}
+		case 4:
+			MENU = false;
+			break;
+		default:
+			cout << "Ввод ошибочен. Повторите ввод.\n";
+			break;
+		}
+	}
+}
