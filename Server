@@ -1,0 +1,1636 @@
+#pragma comment(lib, "WS2_32.lib")
+#include <iostream>
+#define _CRT_SECURE_NO_WARNINGS
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+#include <winsock2.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
+#include <iomanip>
+#include <fstream>
+#include <cstring>
+#include <string>
+#include <Windows.h>
+#include <sstream>
+#include <exception>
+#include <stdexcept>
+#include <new>
+#include <typeinfo>
+#include <conio.h>
+#include <time.h>
+using namespace std;
+
+namespace Check_INT
+{
+	void check(int& i)
+	{
+		char p;
+		while (true)
+		{
+			cin >> i;
+			if (!cin || i > 1000 || i < -1000)
+			{
+				cin.clear();
+				while (cin.get() != '\n');
+				cout << "Некорректный ввод. Желаете продолжить?(1/0): ";
+				cin >> p;
+				if (p == '0')
+				{
+					break;
+				}
+				if (p == '1')
+				{
+					cout << "Введите коректное значение: ";
+				}
+			}
+			else
+			{
+				break;
+			}
+		}
+	}
+}
+string crypt(string word, string login)
+{
+	const string KEY = login;
+	for (int counter = 0; counter < word.length(); counter++)
+	{
+		word[counter] -= (KEY[counter % KEY.length()] - 33) % 159;
+		if (word[counter] > 175)
+			word[counter] += 49;
+		if (word[counter] > 241)
+			word[counter] -= 208;
+	}
+	return word;
+}
+string decrypt(string word, string login)
+{
+	const string KEY = login;
+	for (int counter = 0; counter < word.length(); counter++)
+	{
+		word[counter] += (KEY[counter % KEY.length()] - 33) % 159;
+		if (word[counter] > 175)
+			word[counter] -= 49;
+		if (word[counter] > 241)
+			word[counter] += 208;
+	}
+	return word;
+}
+class Shoes
+{
+	string style;
+	double cost;
+public:
+	string get_style();
+	double get_cost();
+	void tabl();
+	void add_style();
+};
+void Shoes::add_style()
+{
+	cout << "Введите фасон обуви: ";
+	cin >> style;
+	cout << "Введите стоимость одной пары обуви: ";
+	char p;
+	while (true)
+	{
+		cin >> cost;
+		if (!cin || cost > 1000 || cost < -1000)
+		{
+			cin.clear();
+			while (cin.get() != '\n');
+			cout << "Некорректный ввод. Желаете продолжить?(1/0): ";
+			cin >> p;
+			if (p == '0')
+			{
+				break;
+			}
+			if (p == '1')
+			{
+				cout << "Введите коректное значение: ";
+			}
+		}
+		else
+		{
+			break;
+		}
+	}
+}
+double Shoes::get_cost()
+{
+	return cost;
+}
+string Shoes::get_style()
+{
+	return style;
+}
+void Shoes::tabl()
+{
+	ifstream file;
+	file.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Store.txt");
+	string s[100];
+	int n = 0;
+	while (!file.eof())
+	{
+		file >> s[n];
+		n++;
+	}
+	file.close();
+	for (int k = 0; k < 43; k++)
+	{
+		cout << "_";
+	}
+	cout << endl;
+	cout << setw(18) << left << "Название" << setw(25) << "Стоимость одной пары" << "|";
+	cout << endl;
+	for (int k = 0; k < 43; k++)
+	{
+		cout << "—";
+	}
+	cout << endl;
+	for (int p = 0; p < n; )
+	{
+		cout << left << setw(18) << s[p] << setw(25) << s[p + 1] << "|" << endl;
+		p = p + 4;
+	}
+	//cout << "|" << endl;
+	for (int k = 0; k < 43; k++)
+	{
+		cout << "—";
+	}
+	cout << endl;
+}
+class Storage : virtual public Shoes
+{
+	int kol;
+public:
+	int get_num();
+	void add_of_num();
+};
+void Storage::add_of_num()
+{
+	cout << "Введите количество, которое хранится на складе: ";
+	cin >> kol;
+}
+int Storage::get_num()
+{
+	return kol;
+}
+class Size : virtual public Shoes
+{
+	string size;
+public:
+	string get_size();
+	void add_of_size();
+};
+void Size::add_of_size()
+{
+	cout << "Введите промежуток размеров, хранящихся на складе: ";
+	cin >> size;
+}
+string Size::get_size()
+{
+	return size;
+}
+class ID : public Storage, public Size
+{
+	string id;
+public:
+	void add();
+	void red();
+	void del();
+	void all_tabl();
+};
+void ID::del()
+{
+	ifstream file;
+	file.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Store.txt");
+	string s[100];
+	int n = 0;
+	while (!file.eof())
+	{
+		file >> s[n];
+		n++;
+	}
+	file.close();
+	for (int k = 0; k < 79; k++)
+	{
+		cout << "_";
+	}
+	cout << endl;
+	cout << setw(18) << left << "Название" << setw(25) << "Стоимость одной пары" << setw(18) << "Количество" << setw(18) << "Размеры" << "|";
+	cout << endl;
+	for (int k = 0; k < 79; k++)
+	{
+		cout << "—";
+	}
+	cout << endl;
+	for (int p = 0; p < n; )
+	{
+		cout << left << setw(18) << s[p] << setw(25) << s[p + 1] << setw(18) << s[p + 2] << setw(18) << s[p + 3] << "|" << endl;
+		p = p + 4;
+	}
+	//cout << "|" << endl;
+	for (int k = 0; k < 79; k++)
+	{
+		cout << "—";
+	}
+	cout << endl;
+	ofstream file2;
+	file2.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Store.txt", ios::out);
+	cout << "Введите название товара, который желаете изменить: ";
+	string name;
+	int q = -1;
+	cin >> name;
+	for (int j = 0; j < n; j++)
+	{
+		if (name == s[j])
+		{
+			q = j;
+		}
+	}
+	if (q == -1)
+	{
+		cout << "Ошибка ввода" << endl;
+	}
+	else if (q != -1)
+	{
+		ID ob;
+		ob.add_style();
+		ob.add_of_num();
+		ob.add_of_size();
+		for (int j = 0; j < n; j++)
+		{
+			if (j != q)
+			{
+				file2 << s[j] << " ";
+			}
+			else if (j == q)
+			{
+				j = j + 3;
+			}
+		}
+	}
+}
+void ID::red()
+{
+	ifstream file;
+	file.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Store.txt");
+	string s[100];
+	int n = 0;
+	while (!file.eof())
+	{
+		file >> s[n];
+		n++;
+	}
+	file.close();
+	for (int k = 0; k < 79; k++)
+	{
+		cout << "_";
+	}
+	cout << endl;
+	cout << setw(18) << left << "Название" << setw(25) << "Стоимость одной пары" << setw(18) << "Количество" << setw(18) << "Размеры" << "|";
+	cout << endl;
+	for (int k = 0; k < 79; k++)
+	{
+		cout << "—";
+	}
+	cout << endl;
+	for (int p = 0; p < n; )
+	{
+		cout << left << setw(18) << s[p] << setw(25) << s[p + 1] << setw(18) << s[p + 2] << setw(18) << s[p + 3] << "|" << endl;
+		p = p + 4;
+	}
+	//cout << "|" << endl;
+	for (int k = 0; k < 79; k++)
+	{
+		cout << "—";
+	}
+	cout << endl;
+	ofstream file2;
+	file2.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Store.txt", ios::out);
+	cout << "Введите название товара, который желаете изменить: ";
+	string name;
+	int q = -1;
+	cin >> name;
+	for (int j = 0; j < n; j++)
+	{
+		if (name == s[j])
+		{
+			q = j;
+		}
+	}
+	if (q == -1)
+	{
+		cout << "Ошибка ввода" << endl;
+	}
+	else if (q != -1)
+	{
+		ID ob;
+		ob.add_style();
+		ob.add_of_num();
+		ob.add_of_size();
+		ID *pt;
+		pt = &ob;
+		for (int j = 0; j < n; j++)
+		{
+			if (j != q)
+			{
+				file2 << s[j] << " ";
+			}
+			else if (j == q)
+			{
+				file2 << ob.get_style() << " " << ob.get_cost() << " " << ob.get_num() << " " << ob.get_size() << endl;
+				j = j + 3;
+			}
+		}
+	}
+}
+void ID::add()
+{
+	cout << "Сколько видов обуви желаете добавить: ";
+	int k;
+	Check_INT::check(k);
+	//cin >> k;
+	int m = 0;
+	while (m != k)
+	{
+		ID ob;
+		ofstream file;
+		file.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Store.txt", ios::app);
+		ob.add_style();
+		ob.add_of_num();
+		ob.add_of_size();
+		file << ob.get_style() << " " << ob.get_cost() << " " << ob.get_num() << " " << ob.get_size() << endl;
+		file.close();
+		ofstream file2;
+		file2.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\ID.txt", ios::app);
+		const int N = 7;
+		char s[N];
+		int i, j, set_len;
+		char SET[] = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm123456789";
+		srand(time(NULL));
+		set_len = strlen(SET);
+		for (i = 0; i < N - 1 && i < set_len; i++)
+		{
+			j = rand() % (set_len - i) + i;
+			s[i] = SET[j];
+			SET[j] = SET[i];
+		}
+		s[i] = '\0';
+		file2 << ob.get_style() << " " << s << " ";
+		file2.close();
+		m++;
+	}
+}
+void ID::all_tabl()
+{
+	ifstream file;
+	file.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Store.txt");
+	string s[100];
+	int n = 0;
+	while (!file.eof())
+	{
+		file >> s[n];
+		n++;
+	}
+	file.close();
+	for (int k = 0; k < 79; k++)
+	{
+		cout << "_";
+	}
+	cout << endl;
+	cout << setw(18) << left << "Название" << setw(25) << "Стоимость одной пары" << setw(18) << "Количество" << setw(18) << "Размеры" << "|";
+	cout << endl;
+	for (int k = 0; k < 79; k++)
+	{
+		cout << "—";
+	}
+	cout << endl;
+	for (int p = 0; p < n; )
+	{
+		cout << left << setw(18) << s[p] << setw(25) << s[p + 1] << setw(18) << s[p + 2] << setw(18) << s[p + 3] << "|" << endl;
+		p = p + 4;
+	}
+	//cout << "|" << endl;
+	for (int k = 0; k < 79; k++)
+	{
+		cout << "—";
+	}
+	cout << endl;
+}
+class Bank
+{
+	string account;
+	double balance;
+public:
+	void set(string account, double balance)
+	{
+		this->account = account;
+		this->balance = balance;
+	}
+	bool check(double cost) //если тут тру, то заюзать команду покупки
+	{
+		if (balance >= cost)
+		{
+			return true;
+		}
+		else if (balance < cost)
+		{
+			return false;
+		}
+	}
+	double raz(double cost)
+	{
+		return (balance - cost);
+	}
+	string shifr(string login, string pin);
+};
+string Bank::shifr(string login, string pin)
+{
+	return crypt(pin, login);
+}
+template <class T2>
+class Transaction
+{
+	T2* currentState;
+	T2* prevState;
+public:
+	Transaction() :prevState(NULL), currentState(new T2) {}
+	Transaction(const Transaction & obj) : currentState(new T2(*(obj.currentState))), prevState(NULL) {}
+	~Transaction()
+	{
+		delete currentState;
+		delete prevState;
+	}
+	Transaction& operator=(const Transaction & obj);
+	double BeginTransactions(string, double);
+	void commit();
+	void DeleteTransactions();
+	T2* operator->();
+};
+template <class T2>
+Transaction<T2>& Transaction<T2>::operator=(const Transaction<T2> & obj)
+{
+	if (this != &obj)
+	{
+		delete currentState;
+		currentState = new T2(*(obj.currentState));
+	}
+	return *this;
+}
+template <class T2>
+T2* Transaction<T2>::operator->()
+{
+	return currentState;
+}
+template <class T2>
+double Transaction<T2>::BeginTransactions(string acc, double number)
+{
+	delete prevState;
+	prevState = currentState;
+	currentState = new T2(*prevState);
+	if (!currentState)
+		return 0;
+	currentState->set(acc, number);
+	return 1;
+}
+template <class T2>
+void Transaction<T2>::commit()
+{
+	delete prevState;
+	prevState = NULL;
+}
+template <class T2>
+void Transaction<T2>::DeleteTransactions()
+{
+	if (prevState != NULL)
+	{
+		delete currentState;
+		currentState = prevState;
+		prevState = NULL;
+	}
+}
+
+
+
+
+DWORD WINAPI ThreadFunc(LPVOID client_socket)
+{
+	SOCKET s2 = ((SOCKET *)client_socket)[0];
+	int place = 0;
+	recv(s2, (char*)&place, sizeof(place), 0);
+	if (place == 1)
+	{
+
+
+		char buf[100];
+		char buf1[100];
+		ifstream file;
+		file.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Store.txt");
+		string s[100];
+		int n = 0;
+		while (!file.eof())
+		{
+			file >> s[n];
+			n++;
+		}
+		file.close();
+		//while (recv(s2, buf, sizeof(buf), 0))
+		int num = 0;
+		recv(s2, (char*)&num, sizeof(num), 0);
+		if (num == 1)
+		{
+			string gp = "Choose ur shoe: ";
+			char p[100];
+			//strncpy_s(p, gp.c_str(), sizeof(gp));
+			send(s2, gp.c_str(), sizeof(gp), 0);
+			recv(s2, buf, sizeof(buf), 0);
+			string name;
+			name = string(buf);
+			cout << "Название: " << name << endl;
+			int q = -1;
+			for (int j = 0; j < n; j++)
+			{
+				if (name == s[j])
+					q = j;
+			}
+			send(s2, (char*)&q, sizeof(int), 0);
+			cout << q << endl;
+			if (q == -1)
+			{
+				string c = "Данный товар отсутствует";
+				cout << c << endl;
+				//char p_data[100];
+				//strncpy_s(p_data, c.c_str(), sizeof(c));
+				send(s2, c.c_str(), sizeof(c), 0);
+			}
+			else if (q != -1)
+			{
+				//string e = "Сколько пар выбранной обуви желаете приобрести: ";
+				//cout << e << endl;
+				char mail[100];
+				//strncpy_s(mail, e.c_str(), sizeof(e));
+				//const char* mail = e.data();
+				string e = "Number of pairs: ";
+				send(s2, e.c_str(), sizeof(e), 0);
+				double price;
+				istringstream rt(s[q + 1]);
+				rt >> price;
+				int num;
+				istringstream al(s[q + 2]);
+				al >> num;
+				int number = 0;
+				int prov = -1;
+				recv(s2, (char*)&number, sizeof(number), 0);
+				if (number > num)
+				{
+					send(s2, (char*)&prov, sizeof(int), 0);
+					string e2 = "Данное количество отсутствует на складе ";
+					//const char* mail2 = e2.data();
+					send(s2, e2.c_str(), sizeof(e2), 0);
+				}
+				else if (number <= num)
+				{
+					prov = 1;
+					send(s2, (char*)&prov, sizeof(int), 0);
+					double cost;
+					cost = number * price;
+					int cost1 = cost;
+					string hop = "Total cost: ";
+					//send(s2, hop.c_str(), sizeof(hop), 0);
+					send(s2, (char*)&cost1, sizeof(cost1), 0);
+					cout << "Общая стоимость: " << cost1 << endl;
+					ifstream bank;
+					bank.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Bank.txt");
+					string paroli[100];
+					int b = 0;
+					while (!bank.eof())
+					{
+						bank >> paroli[b];
+						b++;
+					}
+					bank.close();
+					ifstream file2;
+					file2.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\ID.txt");
+					string sq[100];
+					int g = 0;
+					while (!file2.eof())
+					{
+						file2 >> sq[g];
+						g++;
+					}
+					string id;
+					int pl;
+					for (int j = 0; j < g; j++)
+					{
+						if (name == sq[j])
+						{
+							id = sq[j + 1];
+							pl = j + 2;
+						}
+					}
+					string e1 = "Name of bank account: ";
+					//const char* mail1 = e1.data();
+					send(s2, e1.c_str(), sizeof(e1), 0);
+					string e3 = "Your password: ";
+					//const char* mail3 = e3.data();
+					send(s2, e3.c_str(), sizeof(e3), 0);
+					char buf3[100], buf4[100];
+					recv(s2, buf3, sizeof(buf3), 0);
+					recv(s2, buf4, sizeof(buf4), 0);
+					string login, pin, pin1;
+					login = string(buf3);
+					pin = string(buf4);
+					int y = -1;
+					for (int j = 0; j < b - 1; j++)
+					{
+						if (paroli[j] == login)
+						{
+							pin1 = decrypt(paroli[j + 1], paroli[j]);
+							if (pin1 == pin)
+							{
+								Transaction<Bank> k_1;
+								double cash;
+								istringstream h(paroli[j + 2]);
+								h >> cash;
+								k_1->set(login, cash);
+								y = j + 2;
+								send(s2, (char*)&y, sizeof(y), 0);
+								if (k_1->check(cost) == true)
+								{
+									//send(s2, (char*)y, sizeof(y), 0);
+
+									double ost = k_1->raz(cost);
+									cout << "Остаток на вашем счету: " << ost << endl;
+									string e6 = "The balance: ";
+									//const char* mail6 = e6.data();
+									send(s2, e6.c_str(), sizeof(e6), 0);
+									int ost1 = ost;
+									send(s2, (char*)&ost1, sizeof(ost1), 0);
+									//cout << "На данном этапе можно отменить покупку. Если хотите отменить введите 0, если хотите произвести оплату, то нажмите 1: ";
+
+									int c = 0;
+									
+									recv(s2, (char*)&c, sizeof(c), 0);
+									if (c == 1)
+									{
+										if (k_1.BeginTransactions(login, ost))
+										{
+											k_1.commit();
+										}
+
+										ofstream bank1;
+										bank1.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Bank.txt", ios::out);
+										for (int j = 0; j < b; j++)
+										{
+											if (j != y)
+											{
+												bank1 << paroli[j] << " ";
+											}
+											else if (j == y)
+											{
+												bank1 << ost << " ";
+												
+												send(s2, id.c_str(), sizeof(id), 0);
+												
+												ofstream file3;
+												file3.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\ID.txt", ios::out);
+												for (int p = 0; p < g; p++)
+												{
+													if (p != pl)
+													{
+														file3 << sq[p] << " ";
+													}
+													else if (p == pl)
+													{
+														file3 << cost << " ";
+													}
+												}
+												file3.close();
+											}
+
+										}
+										bank1.close();
+									}
+									else if (c == 0)
+									{
+										k_1.DeleteTransactions();
+										cout << "Произошла отмена покупки" << endl;
+									}
+								}
+								else if (k_1->check(cost) == false)
+								{
+									cout << "На счёте недостаточно средств" << endl;
+								}
+
+							}
+						}
+					}
+					if (y == -1)
+					{
+						send(s2, (char*)y, sizeof(s2), 0);
+						string e5 = "Данный банковский счёт отсутствует. ";
+						const char* mail5 = e5.data();
+						send(s2, mail5, sizeof(mail5), 0);
+					}
+				}
+
+			}
+		}
+		else if (num == 2)
+		{
+			string f = "Enter ID: ";
+			send(s2, f.c_str(), sizeof(f), 0);
+			char b1[100];
+			recv(s2, b1, sizeof(b1), 0);
+			string id1;
+			id1 = string(b1);
+			ifstream file2;
+			file2.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\ID.txt");
+			string sq[100];
+			int g = 0;
+			while (!file2.eof())
+			{
+				file2 >> sq[g];
+				g++;
+			}
+			file2.close();
+			int pl = -1;
+			for (int j = 0; j < g; j++)
+			{
+				if (id1 == sq[j])
+				{
+					pl = j + 1;
+				}
+			}
+			send(s2, (char*)&pl, sizeof(pl), 0);
+			if (pl == -1)
+			{
+				string mil = "There is no ur order";
+				send(s2, mil.c_str(), sizeof(mil), 0);
+			}
+			else if (pl != -1)
+			{
+				ifstream bank;
+				bank.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Bank.txt");
+				string paroli[100];
+				int b = 0;
+				while (!bank.eof())
+				{
+					bank >> paroli[b];
+					b++;
+				}
+				bank.close();
+				string e1 = "Name of bank account: ";
+				//const char* mail1 = e1.data();
+				send(s2, e1.c_str(), sizeof(e1), 0);
+				string e3 = "Your password: ";
+				//const char* mail3 = e3.data();
+				send(s2, e3.c_str(), sizeof(e3), 0);
+				char buf3[100], buf4[100];
+				recv(s2, buf3, sizeof(buf3), 0);
+				recv(s2, buf4, sizeof(buf4), 0);
+				string login, pin, pin1;
+				login = string(buf3);
+				pin = string(buf4);
+				int y = -1;
+				for (int j = 0; j < b - 1; j++)
+				{
+					if (paroli[j] == login)
+					{
+						pin1 = decrypt(paroli[j + 1], paroli[j]);
+						if (pin1 == pin)
+						{
+							y = j + 2;
+							send(s2, (char*)&y, sizeof(y), 0);
+							double cash;
+							istringstream h(sq[pl]);
+							h >> cash;
+							double price;
+							istringstream a(paroli[j + 2]);
+							a >> price;
+							cash = cash + price;
+							ofstream bank1;
+							bank1.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Bank.txt", ios::out);
+							for (int p = 0; p < b; p++)
+							{
+								if (p != (j + 2))
+								{
+									bank1 << paroli[p] << " ";
+								}
+								else if (p == (j + 2))
+								{
+									bank1 << cash << " ";
+								}
+							}
+							bank1.close();
+							ofstream file3;
+							file3.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\ID.txt", ios::out);
+							for (int p = 0; p < g; p++)
+							{
+								if (p != pl)
+								{
+									file3 << sq[p] << " ";
+								}
+								else if (p == pl)
+								{
+									file3 << "0 ";
+								}
+							}
+							file3.close();
+							int cash1 = cash;
+							cout << "Средства были возвращены в размере: " << sq[pl] << endl << "Остаток на счёте: " << cash << endl;
+							string mil_1 = "Средства были возвращены";
+							send(s2, mil_1.c_str(), sizeof(mil_1), 0);
+							string mil_2 = "Остаток на счёте: ";
+							send(s2, mil_2.c_str(), sizeof(mil_2), 0);
+							send(s2, (char*)&cash1, sizeof(cash1), 0);
+
+						}
+					}
+				}
+				if (y == -1)
+				{
+					send(s2, (char*)y, sizeof(s2), 0);
+					string e5 = "Данный банковский счёт отсутствует";
+					//const char* mail5 = e5.data();
+					send(s2, e5.c_str(), sizeof(e5), 0);
+				}
+			}
+		}
+	}
+	else if (place == 2)
+	{
+		int num = 0;
+		recv(s2, (char*)&num, sizeof(num), 0);
+		if (num == 1)
+		{
+			int kol;
+			recv(s2, (char*)&kol, sizeof(kol), 0);
+			for (int j = 0; j < kol; j++)
+			{
+				string style;
+				int cost;
+				int num;
+				string size;
+				char buf_1[100], buf_2[100], buf_3[100], buf_4[100];
+				recv(s2, buf_1, sizeof(buf_1), 0);
+				recv(s2, (char*)&cost, sizeof(cost), 0);
+				recv(s2, (char*)&num, sizeof(num), 0);
+				recv(s2, buf_2, sizeof(buf_2), 0);
+				style = string(buf_1);
+				size = string(buf_2);
+				ofstream file;
+				file.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Store.txt", ios::app);
+				cout << style << " " << cost << " " << num << " " << size << endl;
+				file << style << " " << cost << " " << num << " " << size << endl;
+				file.close();
+				recv(s2, buf_3, sizeof(buf_3), 0);
+				ofstream file2;
+				file2.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\ID.txt", ios::app);
+				file2 << style << " " << buf_3 << " 0 ";
+				file2.close();
+			}
+		
+
+		}
+		else if (num == 2)
+		{
+			ifstream file;
+			file.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Store.txt");
+			string s[100];
+			int n = 0;
+			while (!file.eof())
+			{
+				file >> s[n];
+				n++;
+			}
+			file.close();
+
+			send(s2, (char*)&n, sizeof(n), 0);
+			for (int j = 0; j < n;)
+			{
+				int siz = sizeof(s[j]), siz2 = sizeof(s[j + 1]), siz3 = sizeof(s[j + 2]), siz4 = sizeof(s[j + 3]);
+				send(s2, (char*)&siz, sizeof(siz), 0);
+				send(s2, (char*)&siz2, sizeof(siz2), 0);
+				send(s2, (char*)&siz3, sizeof(siz3), 0);
+				send(s2, (char*)&siz4, sizeof(siz4), 0);
+				send(s2, s[j].c_str(), sizeof(s[j]), 0);
+				send(s2, s[j + 1].c_str(), sizeof(s[j + 1]), 0);
+				send(s2, s[j + 2].c_str(), sizeof(s[j + 2]), 0);
+				send(s2, s[j + 3].c_str(), sizeof(s[j + 3]), 0);
+				cout << s[j] << " " << s[j + 1] << " " << s[j + 2] << " " << s[j + 3] << endl;
+				j += 4;
+
+			}
+			char nam[100];
+			recv(s2, nam, 100, 0);
+			string name;
+			name = string(nam);
+			cout << "Name: " << name << endl;
+			int q = -1;
+			for (int j = 0; j < n; j++)
+			{
+				if (name == s[j])
+				{
+					q = j;
+				}
+			}
+			send(s2, (char*)&q, sizeof(q), 0);
+
+
+			string style;
+			int cost;
+			int num;
+			string size;
+			char buf_1[100], buf_2[100], buf_3[100], buf_4[100];
+			recv(s2, buf_1, sizeof(buf_1), 0);
+			recv(s2, (char*)&cost, sizeof(cost), 0);
+			recv(s2, (char*)&num, sizeof(num), 0);
+			recv(s2, buf_2, sizeof(buf_2), 0);
+			style = string(buf_1);
+			size = string(buf_2);
+			ofstream file1;
+			file1.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Store.txt", ios::out);
+			for (int j = 0; j < n; j++)
+			{
+				if (j != q)
+				{
+					file1 << s[j] << " ";
+				}
+				else if (j == q)
+				{
+					file1 << style << " " << cost << " " << num << " " << size << endl;
+					j = j + 3;
+				}
+			}
+			file1.close();
+			recv(s2, buf_3, sizeof(buf_3), 0);
+			string id(buf_3);
+			ifstream file3;
+			file3.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\ID.txt");
+			string s3[100];
+			int n_1 = 0;
+			while (!file.eof())
+			{
+				file3 >> s3[n_1];
+				n_1++;
+			}
+			file3.close();
+			int q_1 = -1;
+			for (int j = 0; j < n_1; j++)
+			{
+				if (name == s3[j])
+				{
+					q_1 = j;
+				}
+			}
+			/*cout << "fgdf: " << q_1 << endl;
+			ofstream file2;
+			file2.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\ID.txt", ios::out);
+			for (int j = 0; j < n_1; j++)
+			{
+				if (j != q_1)
+				{
+					file2 << s3[j] << " ";
+				}
+				else if (j == q_1)
+				{
+					//file2 << style << " " << id << " 0 ";
+					file2 << style << " " << s[q_1 + 1] << " 0 ";
+					j++;
+				}
+			}*/
+			ofstream file2;
+			file2.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\ID.txt", ios::app);
+			file2 << style << " " << id << " 0 ";
+			file2.close();
+			//file2.close();
+		}
+		else if (num == 3)
+		{
+		ifstream file;
+		file.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Store.txt");
+		string s[100];
+		int n = 0;
+		while (!file.eof())
+		{
+			file >> s[n];
+			n++;
+		}
+		file.close();
+
+		send(s2, (char*)&n, sizeof(n), 0);
+		for (int j = 0; j < n;)
+		{
+			int siz = sizeof(s[j]), siz2 = sizeof(s[j + 1]), siz3 = sizeof(s[j + 2]), siz4 = sizeof(s[j + 3]);
+			send(s2, (char*)&siz, sizeof(siz), 0);
+			send(s2, (char*)&siz2, sizeof(siz2), 0);
+			send(s2, (char*)&siz3, sizeof(siz3), 0);
+			send(s2, (char*)&siz4, sizeof(siz4), 0);
+			send(s2, s[j].c_str(), sizeof(s[j]), 0);
+			send(s2, s[j + 1].c_str(), sizeof(s[j + 1]), 0);
+			send(s2, s[j + 2].c_str(), sizeof(s[j + 2]), 0);
+			send(s2, s[j + 3].c_str(), sizeof(s[j + 3]), 0);
+			cout << s[j] << " " << s[j + 1] << " " << s[j + 2] << " " << s[j + 3] << endl;
+			j += 4;
+
+		}
+		char nam[100];
+		recv(s2, nam, 100, 0);
+		string name(nam);
+		int q = -1;
+		for (int j = 0; j < n; j++)
+		{
+			if (name == s[j])
+			{
+				q = j;
+			}
+		}
+		if (q == -1)
+		{
+			string mail = "Ошибка удаления";
+			send(s2, mail.c_str(), sizeof(mail), 0);
+		}
+		else if (q != -1)
+		{
+			string mail2 = "Удаление прошло успешно";
+			send(s2, mail2.c_str(), sizeof(mail2), 0);
+			ofstream file1;
+			file1.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Store.txt", ios::out);
+			for (int j = 0; j < n; j++)
+			{
+				if (j != q)
+				{
+					file1 << s[j] << " ";
+				}
+				else if (j == q)
+				{
+					j += 3;
+				}
+			}
+			ifstream file3;
+			file3.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\ID.txt");
+			string s3[100];
+			int n_1 = 0;
+			while (!file.eof())
+			{
+				file3 >> s3[n_1];
+				n_1++;
+			}
+			file3.close();
+			int q_1 = -1;
+			for (int j = 0; j < n_1; j++)
+			{
+				if (name == s3[j])
+				{
+					q_1 = j;
+				}
+			}
+			ofstream file2;
+			file2.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\ID.txt", ios::out);
+			for (int j = 0; j < n_1; j++)
+			{
+				if (j != q_1)
+				{
+					file2 << s3[j] << " ";
+				}
+				else if (j == q_1)
+				{
+					j = j + 2;
+				}
+			}
+			file2.close();
+		}
+		}
+		else if (num == 4)
+		{
+			ifstream file;
+			file.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Store.txt");
+			string s[100];
+			int n = 0;
+			while (!file.eof())
+			{
+				file >> s[n];
+				n++;
+			}
+			file.close();
+			
+			send(s2, (char*)&n, sizeof(n), 0);
+			for (int j = 0; j < n;)
+			{
+				int siz = sizeof(s[j]), siz2 = sizeof(s[j+1]), siz3 = sizeof(s[j+2]), siz4 = sizeof(s[j+3]);
+				send(s2, (char*)&siz, sizeof(siz), 0);
+				send(s2, (char*)&siz2, sizeof(siz2), 0);
+				send(s2, (char*)&siz3, sizeof(siz3), 0);
+				send(s2, (char*)&siz4, sizeof(siz4), 0);
+				send(s2, s[j].c_str(), sizeof(s[j]), 0);
+				send(s2, s[j+1].c_str(), sizeof(s[j+1]), 0);
+				send(s2, s[j+2].c_str(), sizeof(s[j+2]), 0);
+				send(s2, s[j+3].c_str(), sizeof(s[j+3]), 0);
+				cout << s[j] << " " << s[j + 1] << " " << s[j + 2] << " " << s[j + 3] << endl;
+				j += 4;
+				
+			}
+
+		}
+		else if (num == 6)
+		{
+		/////////Метод/////////////////
+		
+			ifstream file1;
+			file1.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Method.txt");
+			string s[100];
+			int n = 0;
+			while (!file1.eof())
+			{
+				file1 >> s[n];
+				n++;
+			}
+			file1.close();
+			int pl1=0, pl2=0;
+			for (int j = 0; j < n; j++)
+			{
+				if (s[j] == "exp1")
+				{
+					pl1 = j;
+				}
+				else if (s[j] == "exp2")
+				{
+					pl2 = j;
+				}
+			}
+			send(s2, (char*)&n, sizeof(n), 0);
+			if (n < 4 )
+			{
+				int size = 0;
+				recv(s2, (char*)&size, sizeof(size), 0);
+				int mark[10];
+				for (int j = 0; j < size; j++)
+				{
+					recv(s2, (char*)&mark[j], sizeof(mark[j]), 0);
+				}
+
+				for (int k = 0; k < 25; k++)
+				{
+					cout << "_";
+				}
+				cout << endl;
+				cout << setw(5) << left << "Э1" << setw(5) << "Z1" << setw(5) << "Z2" << setw(5) << "Z3" << setw(5) << "Z4" << "|";
+				cout << endl;
+				for (int k = 0; k < 25; k++)
+				{
+					cout << "—";
+				}
+				cout << endl;
+				cout << setw(5) << left << "Z1" << setw(5) << "-" << setw(5) << mark[0] << setw(5) << mark[1] << setw(5) << mark[2] << "|" << endl;
+				cout << setw(5) << left << "Z2" << setw(5) << (20 - mark[0]) << setw(5) << "-" << setw(5) << mark[3] << setw(5) << mark[4] << "|" << endl;
+				cout << setw(5) << left << "Z3" << setw(5) << (20 - mark[1]) << setw(5) << (20 - mark[3]) << setw(5) << "-" << setw(5) << mark[5] << "|" << endl;
+				cout << setw(5) << left << "Z4" << setw(5) << (20 - mark[2]) << setw(5) << (20 - mark[4]) << setw(5) << (20 - mark[5]) << setw(5) << "-" << "|" << endl;
+				for (int k = 0; k < 25; k++)
+				{
+					cout << "—";
+				}
+				cout << endl;
+
+
+				int Z[4][4];
+				for (int j = 1; j <= 4; j++)
+				{
+					if (j == 1)
+					{
+						Z[0][0] = 0; Z[0][1] = mark[0]; Z[0][2] = mark[1]; Z[0][3] = mark[2];
+					}
+					else if (j == 2)
+					{
+						Z[1][0] = (20 - Z[0][1]); Z[1][1] = 0; Z[1][2] = mark[3]; Z[1][3] = mark[4];
+					}
+					else if (j == 3)
+					{
+						Z[2][0] = (20 - Z[0][2]); Z[2][1] = (20 - Z[1][2]); Z[2][2] = 0; Z[2][3] = mark[5];
+					}
+					else if (j == 4)
+					{
+						Z[3][0] = (20 - Z[0][3]); Z[3][1] = (20 - Z[1][3]); Z[3][2] = (20 - Z[2][3]); Z[3][3] = 0;
+					}
+				}
+
+
+
+				int Z1[4][4];
+				int size1 = 0;
+				recv(s2, (char*)&size1, sizeof(size1), 0);
+				int mark1[10];
+				for (int j = 0; j < size1; j++)
+				{
+					recv(s2, (char*)&mark1[j], sizeof(mark1[j]), 0);
+				}
+
+				for (int k = 0; k < 25; k++)
+				{
+					cout << "_";
+				}
+				cout << endl;
+				cout << setw(5) << left << "Э1" << setw(5) << "Z1" << setw(5) << "Z2" << setw(5) << "Z3" << setw(5) << "Z4" << "|";
+				cout << endl;
+				for (int k = 0; k < 25; k++)
+				{
+					cout << "—";
+				}
+				cout << endl;
+				cout << setw(5) << left << "Z1" << setw(5) << "-" << setw(5) << mark1[0] << setw(5) << mark1[1] << setw(5) << mark1[2] << "|" << endl;
+				cout << setw(5) << left << "Z2" << setw(5) << (20 - mark1[0]) << setw(5) << "-" << setw(5) << mark1[3] << setw(5) << mark1[4] << "|" << endl;
+				cout << setw(5) << left << "Z3" << setw(5) << (20 - mark1[1]) << setw(5) << (20 - mark1[3]) << setw(5) << "-" << setw(5) << mark1[5] << "|" << endl;
+				cout << setw(5) << left << "Z4" << setw(5) << (20 - mark1[2]) << setw(5) << (20 - mark1[4]) << setw(5) << (20 - mark1[5]) << setw(5) << "-" << "|" << endl;
+				for (int k = 0; k < 25; k++)
+				{
+					cout << "—";
+				}
+				cout << endl;
+
+				for (int j = 1; j <= 4; j++)
+				{
+					if (j == 1)
+					{
+						Z1[0][0] = 0; Z1[0][1] = mark1[0]; Z1[0][2] = mark1[1]; Z1[0][3] = mark1[2];
+					}
+					else if (j == 2)
+					{
+						Z1[1][0] = (20 - Z1[0][1]); Z1[1][1] = 0; Z1[1][2] = mark1[3]; Z1[1][3] = mark1[4];
+					}
+					else if (j == 3)
+					{
+						Z1[2][0] = (20 - Z1[0][2]); Z1[2][1] = (20 - Z1[1][2]); Z1[2][2] = 0; Z1[2][3] = mark1[5];
+					}
+					else if (j == 4)
+					{
+						Z1[3][0] = (20 - Z1[0][3]); Z1[3][1] = (20 - Z1[1][3]); Z1[3][2] = (20 - Z1[2][3]); Z1[3][3] = 0;
+					}
+				}
+
+
+
+				float f[2][4] = { 0,0,0,0,0,0,0,0 }; //оценки предпочтения
+				for (int i = 0; i < 4; i++)
+				{
+					for (int j = 0; j < 4; j++)
+					{
+						f[0][i] += Z[i][j];
+						f[1][i] += Z1[i][j];
+					}
+				}
+				float Q[2][4]; //нормируемые оценки
+				for (int i = 0; i < 4; i++)
+				{
+					for (int j = 0; j < 4; j++)
+					{
+						Q[0][j] = f[0][j] / 30;
+						Q[1][j] = f[1][j] / 30;
+					}
+				}
+				float W[4] = { 0,0,0,0 }; //веса целей
+				for (int j = 0; j < 4; j++)
+				{
+					W[j] = Q[0][j] + Q[1][j];
+					cout << "W" << (j + 1) << " = " << W[j] << endl;
+					send(s2, (char*)&W[j], sizeof(W[j]), 0);
+				}
+
+				ofstream file2;
+				file2.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Method.txt", ios::out);
+				file2 << s[pl1] << " " << mark[0] << " " << mark[1] << " " << mark[2] << " " << mark[3] << " " << mark[4] << " " << mark[5] << endl;
+				file2 << s[pl2] << " " << mark1[0] << " " << mark1[1] << " " << mark1[2] << " " << mark1[3] << " " << mark1[4] << " " << mark1[5] << endl;
+				file2.close();
+			}
+			else if (n > 4)
+			{
+				
+				string mark[6];
+				int size_of[10];
+				for (int j = 0; j < 6; j++)
+				{
+					mark[j] = s[j + 1];
+					int siz = sizeof(mark[j]);
+					send(s2, (char*)&siz, sizeof(siz), 0);
+					//cout << mark[j] << endl;
+					send(s2, mark[j].c_str(), siz, 0);
+				}
+
+				string mark1[6];
+				for (int j = 0; j < 6; j++)
+				{
+					mark1[j] = s[pl2 + 1];
+					int siz = sizeof(mark1[j]);
+					send(s2, (char*)&siz, sizeof(siz), 0);
+					//cout << mark1[j] << endl;
+					send(s2, mark1[j].c_str(), siz, 0);
+					pl2++;
+				}
+				
+				int prov = 0;
+				recv(s2, (char*)&prov, sizeof(prov), 0);
+				if (prov == 1)
+				{
+					ofstream file3;
+					file3.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Method.txt", ios::out);
+					file3 << "exp1" << endl << "exp2";
+				}
+			}
+			
+
+		}
+
+	}
+	else if (place == 3)
+	{
+	char buf[100], buf2[100];
+	recv(s2, buf, 100, 0);
+	recv(s2, buf2, 100, 0);
+	string name(buf), pas(buf2);
+	ifstream file("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Keys.txt");
+	int k, s[100], i = 0, n = 0, f = 0;
+	int m;
+	string str[100];
+	while (!file.eof())
+	{
+		file >> str[i];
+		i++;
+	}
+	file.close();
+	for (int p = 0; p < i; p++)
+	{
+		if (str[p] == "administrator")
+		{
+			n = p;
+		}
+		else if (str[p] == "polzovatel")
+		{
+			f = p;
+		}
+	}
+	ofstream file2("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Keys.txt", ios_base::trunc);
+	file2.close();
+	ofstream file3("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Keys.txt", ios_base::app);
+	for (int p = 0; p < i; p++)
+	{
+		if (p != f)
+		{
+			file3 << str[p] << " ";
+		}
+		else
+		{
+			pas = crypt(pas, name);
+			file3 << str[f] << " " << name << " " << pas << " ";
+		}
+	}
+	file3.close();
+
+	int kesh = 0;
+	char buf3[100], buf4[100];
+	recv(s2, buf3, 100, 0);
+	recv(s2, buf4, 100, 0);
+	recv(s2, (char*)&kesh, sizeof(kesh), 0);
+	string b(buf3), pin(buf4);
+
+	ofstream bank;
+	bank.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Bank.txt", ios::app);
+	Bank p;
+	string rez;
+	rez = p.shifr(b, pin);
+	bank << b << " " << rez << " " << kesh << endl;
+	cout << endl;
+	}
+	closesocket(s2);
+	return 0;
+}
+void print(int num)
+{
+	if (num > 0)
+	{
+		cout << num << "-й слиент подключился" << endl;
+	}
+	else
+		cout << "Error";
+}
+void polzovatel()
+{
+	cout << "Сервер" << endl;
+	WORD wVersionRequested;
+	WSADATA wsaData;
+	wVersionRequested = MAKEWORD(2, 2);
+	if (WSAStartup(wVersionRequested, &wsaData) == WSASYSNOTREADY)
+	{
+		cout << "Error";
+		exit(1);
+	}
+	SOCKET s = socket(AF_INET, SOCK_STREAM, 0);
+	struct sockaddr_in local;
+	local.sin_family = AF_INET;
+	local.sin_port = htons(1280);
+	local.sin_addr.s_addr = 0;
+	bind(s, (struct sockaddr*)&local, sizeof(local));//связывание адреса с сокетом
+	int c = listen(s, 5);
+	SOCKET client_socket;
+	sockaddr_in client_addr;
+	int client_addr_size = sizeof(client_addr);
+	int num = 0;
+	while ((client_socket = accept(s, (sockaddr *)&client_addr, &client_addr_size))) {
+		num++;
+		print(num);
+		DWORD thID;
+		CreateThread(NULL, NULL, ThreadFunc, &client_socket, NULL, &thID);
+	}
+
+	closesocket(s);
+	WSACleanup();
+}
+string slesh()
+{
+	string str = "";
+	char c;
+	while (true) {
+		c = _getch();
+		_getch();
+		if (c == 13) break;
+		else if (c == 8 && !str.empty())
+		{
+			cout << '\b';
+			cout << ' ';
+			cout << '\b';
+			str.pop_back();
+		}
+		else if (c != 8)
+		{
+			str = str + char(c);
+			cout << "*";
+		}
+		//_getch();
+	}
+
+	cout << endl;
+	//str.push_back('\0');
+	return str;
+}
+
+bool shift()
+{
+	ifstream fin;
+	fin.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Keys.txt", ios_base::app);
+	string str1[100];
+	string str2[100];
+	int i = 0, k = 1, f = 0, n, q;
+	while (!fin.eof())
+	{
+		//str1[i] = "";
+		fin >> str1[i];
+		if (str1[i] == "administrator")
+		{
+			n = i;
+		}
+		if (str1[i] == "polzovatel")
+		{
+			q = i;
+		}
+		i++;
+	}
+	while (k == 1)
+	{
+		f = 0;
+		k = 1;
+		cout << "Введите логин: ";
+		cin >> str2[k];
+		cout << "Введите пароль: ";
+		str2[k + 1] = slesh();
+		for (int p = n; p < q; p++)
+		{
+			if (str1[p] == str2[k])
+			{
+				//str1[1] = decrypt(str1[1], str1[0]);
+				str1[p + 1] = decrypt(str1[p + 1], str1[p]);//реализовать дешифрование
+				if (str1[p + 1] == str2[k + 1])
+				{
+					f = 0;
+					break;
+				}
+			}
+			else
+				f++;
+		}
+		if (f == 0)
+		{
+			k = 0;
+			return true;
+		}
+		else
+		{
+			cout << "Логин или пароль ошибочны. Повторить ввод?(1/0): ";
+			//cin >> k;
+			Check_INT::check(k);
+			if (k == 0)
+			{
+				return false;
+			}
+		}
+	}
+	fin.close();
+}
+bool shift_polz()
+{
+
+	ifstream fin;
+	fin.open("C:\\Users\\vadim\\source\\repos\\Обувная фабрика\\Обувная фабрика\\Keys.txt", ios_base::app);
+	string str1[100];
+	string str2[100];
+	int i = 0, k = 1, f = 0, n, q;
+	while (!fin.eof())
+	{
+		//str1[i] = "";
+		fin >> str1[i];
+		if (str1[i] == "administrator")
+		{
+			n = i;
+		}
+		if (str1[i] == "polzovatel")
+		{
+			q = i;
+		}
+		i++;
+	}
+	while (k == 1)
+	{
+		f = 0;
+		k = 1;
+		cout << "Введите логин: ";
+		cin >> str2[k];
+		cout << "Введите пароль: ";
+		str2[k + 1] = slesh();;
+		for (int p = q; p < i; p++)
+		{
+			if (str1[p] == str2[k])
+			{
+				//str1[1] = decrypt(str1[1], str1[0]);
+				str1[p + 1] = decrypt(str1[p + 1], str1[p]);
+				if (str1[p + 1] == str2[k + 1])
+				{
+					f = 0;
+					break;
+				}
+			}
+			else
+				f++;
+		}
+		if (f == 0)
+		{
+			k = 0;
+			return true;
+		}
+		else
+		{
+			cout << "Логин или пароль ошибочны. Повторить ввод?(1/0): ";
+			//cin >> k;
+			Check_INT::check(k);
+			if (k == 0)
+			{
+				return false;
+			}
+		}
+	}
+	fin.close();
+}
+
+int main()
+{
+	setlocale(LC_ALL, "Russian");
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
+	cout << "Сервер" << endl;
+	WORD wVersionRequested;
+	WSADATA wsaData;
+	wVersionRequested = MAKEWORD(2, 2);
+	if (WSAStartup(wVersionRequested, &wsaData) == WSASYSNOTREADY)
+	{
+		cout << "Error";
+		exit(1);
+	}
+	SOCKET s = socket(AF_INET, SOCK_STREAM, 0);
+	struct sockaddr_in local;
+	local.sin_family = AF_INET;
+	local.sin_port = htons(1280);
+	local.sin_addr.s_addr = 0;
+	bind(s, (struct sockaddr*)&local, sizeof(local));//связывание адреса с сокетом
+	int c = listen(s, 5);
+	SOCKET client_socket;
+	sockaddr_in client_addr;
+	int client_addr_size = sizeof(client_addr);
+	int num = 0;
+	while ((client_socket = accept(s, (sockaddr *)&client_addr, &client_addr_size))) {
+		num++;
+		print(num);
+		DWORD thID;
+		CreateThread(NULL, NULL, ThreadFunc, &client_socket, NULL, &thID);
+	}
+
+	closesocket(s);
+	WSACleanup();
+}
